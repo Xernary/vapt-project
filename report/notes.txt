@@ -1,0 +1,41 @@
+➤  nmap -T4 10.10.155.252
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-06-11 18:34 CEST
+Nmap scan report for 10.10.155.252
+Host is up (0.077s latency).
+Not shown: 997 closed tcp ports (conn-refused)
+PORT   STATE SERVICE
+21/tcp open  ftp
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 2.17 seconds
+
+------------------------
+
+✦4 ➤  ftp 10.10.155.252
+Connected to 10.10.155.252.
+220 (vsFTPd 3.0.3)
+Name (10.10.155.252:nick): anonymous
+331 Please specify the password.
+Password: 
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+drwxr-xr-x    2 65534    65534        4096 Jul 24  2022 pub
+226 Directory send OK.
+ftp> cd pub
+250 Directory successfully changed.
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+-rw-r--r--    1 0        0             134 Jul 24  2022 notice.txt
+-rwxr-xr-x    1 0        0            8856 Jul 22  2022 password
+226 Directory send OK.
+ftp> get notice.txt password
+200 PORT command successful. Consider using PASV.
+150 Opening BINARY mode data connection for notice.txt (134 bytes).
+226 Transfer complete.
+134 bytes received in 0.0316 seconds (4.1453 kbytes/s)
