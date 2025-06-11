@@ -1,0 +1,54 @@
+OSCP - https://github.com/whoisflynn/OSCP-Exam-Report-Template/blob/master/OSCP-OS-XXXXX-Exam-Report_Template.docx
+1.0 Offensive Security Exam Penetration Test Report	3
+    1.1 Introduction	4
+    1.2 Objective	4
+    1.3 Requirements	4
+2.0 High-Level Summary	5
+    2.1 Recommendations	6
+3.0 Methodologies	6
+    3.1 Information Gathering	6
+        Privilege Escalation	7
+    System IP: 192.168. ()	9
+        Service Enumeration	9
+        Privilege Escalation	9
+    System IP: 192.168. ()	10
+        Service Enumeration	10
+        Privilege Escalation	10
+    System IP: 192.168. ()	12
+        Service Enumeration	12
+        Privilege Escalation	12
+    System IP: 192.168.57.112 (b0f-vic)	13
+        3.3 Maintaining Access	18
+        3.4 House Cleaning	18
+4.0 Additional Items3.2 Penetration	7
+    System IP: 192.168. ()	7
+        Service Enumeration	7
+Appendix 1 - Proof and Local Contents:	19
+Appendix 2 - Metasploit/Meterpreter Usage	19
+Appendix 3 - Completed Buffer Overflow Code
+----------------------------------------------------------------
+OFFSEC - https://www.offsec.com/reports/sample-penetration-testing-report.pdf
+Executive Summary 1
+    Summary of Results 2
+Attack Narrative 3
+    Remote System Discovery 3
+    Admin Webserver Interface Compromise 6
+    Interactive Shell to Admin Server 9
+    Administrative Privilege Escalation 12
+    Java Client Attacks 13
+    Escalation to Local Administrator 15
+    Deep Packet Inspection Bypass 16
+    Citrix Environment Compromise 20
+    Escalation to Domain Administrator 24
+Conclusion 28
+    Recommendations 29
+    Risk Rating 30
+Appendix A: Vulnerability Detail and Mitigation 31
+    Risk Rating Scale 31
+    Default or Weak Credentials 31
+    Password Reuse 32
+    Shared Local Administrator Password 32
+    Patch Management 33
+    DNS Zone Transfer 33
+    Default Apache Files
+
