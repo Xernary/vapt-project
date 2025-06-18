@@ -1,0 +1,5 @@
+Tools da provare a usare:
+-nmap
+-OpenVAS - Ci fornisce un report (su browser) con tutte le vuln trovate 
+-SQLMap - Tool automatico che prova a fare sql injection su un sito
+-Metasploit 
