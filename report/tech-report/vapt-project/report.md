@@ -193,15 +193,61 @@ Mi è poi bastato andare nella directory /root per trovare un file root.txt, che
 
 ![[Pasted image 20250619124132.png]]
 
-Anche dopo la ricerca di un file flag.txt tramite find non ho trovato nessuna flag, probabilmente non si trova su questa macchina.
+Anche dopo la ricerca di un file flag.txt tramite find non ho trovato nessuna flag, probabilmente non si trova su questa macchina, o meglio su questo container.
 
 
 ### Lateral Movement
 
+Uno scan tramite `nmap` sulla VLAN della macchina target (172.17.0.0/16) rivela due host (probabilmente altri 2 container docker). Il secondo sembra semplicemente hostare il database postres mentre il prima sembra più interessante.
 
+![[Pasted image 20250619192803.png]]
+![[Pasted image 20250619192851.png]]
+Ho provato a loggarmi con ssh alla macchina .1 provando con varie credenziali comuni ma senza successo; non ho continuato oltre visto che la Room dice esplicitamente che non è richiesto bruteforce. Inoltre ho tentato di collegarmi tramite FTP sulla porta 21 ma la macchina target non ha ftp. Mi sono quindi concentrato sul servizio alla porta 4444, che sembra insolito.
+
+![[Pasted image 20250619193337.png]]
+
+Fortunatamente la macchina target ha netcat installato che mi ha permesso di collegarmi al servizio 4444. Su tale porta gira lo stesso eseguibile ret di prima: mi è bastato usare lo stesso payload per ottenere una shell sulla macchina 172.17.0.1 e fare così movimento laterale.
+
+![[Pasted image 20250619193655.png]]
+
+Vengo loggato come zeeshan e ottengo la seconda flag della room.
 
 
 ### Privilege Escalation on Second Machine
+
+Con la stessa logica di prima, anche in questa macchina cerco un eseguibile SUID che mi permetta di passare da zeeshan a root.
+
+![[Pasted image 20250619193859.png]]
+
+Il primo eseguibile che salta all'occhio è l'unico che si trova nella root ovvero exploit_me. Lo trasferisco sulla mia macchina usando lo stesso metodo usato prima.
+
+![[Pasted image 20250619194043.png]]
+
+Le protezioni di questo ELF sono le stesse di ret. Analizzandolo con Ghidra però ci sono alcune differenze sostanziali rispetto a ret.
+
+![[Pasted image 20250619194345.png]]
+![[Pasted image 20250619194405.png]]
+
+Infatti l'unica funzione all'interno di exploit_me è il main. Non ci sono altre funzioni da poter chiamare per ottenere shell o altro. Anche questo eseguibile è vulnerabile a BOF per gli stessi motivi di ret. Anche se posso reindirizzare il flusso di esecuzione, non ho a disposizione una funzione all'interno dell'ELF da poter chiamare come prima. Essendo lo stack non eseguibile (NX enabled) non è nemmeno possibile effettuare un attacco di shellcode injection; rimane soltanto una opzione disponibile: un attacco **ret2libc**.
+Return to libc o ret2libc è un attacco avanzato che consiste nell'utilizzo della libreria libc del programma. Il funzionamento è il seguente:
+- Trovare l'indirizzo a cui è stata mappata la libc (base libc address)
+- Trovare determinati gadget all'interno della libc (istruzioni assembly the terminano con una istruzione ret) 
+- Con i gadget trovati costruire una ROP chain che spawna una shell
+- Injectare un payload tramite BOF contenente gli indirizzi della ROP chain, calcolati tramite il base libc address
+
+Il primo step non è necessario nel caso in cui l'ASLR della macchina in cui viene eseguito il programma è disabilitato, ma in questo caso non lo è; l'ho verificato tramite il comando:
+
+```
+cat /proc/sys/kernel/randomize_va_space
+```
+
+che restituisce 2 (Full ALSR).
+
+L'ALSR randomizza l'indirizzo a cui viene mappata la libreria libc ad ogni esecuzione. Per bypassare questa protezione ho utilizzato il metodo **ret2plt**. Questa tecnica consiste nello stampare l'indirizzo effettivo in memoria di una funzione della libc (di solito la puts) tramite lettura della GOT.
+Segue una breve spiegazione dell'utilizzo delle tabelle PLT e GOT da parte del programma.
+
+Quando il programma viene eseguito, mappa la libc e altre librerie dinamiche ad un indirizzo random in memoria. Ogni qual volta che una funzione di tale libreria viene chiamata per la prima volta, il linker calcola il suo indirizzo e lo inserisce nella GOT, compilandola man mano che le funzioni vengono chiamate. In questo modo solo gli indirizzi delle funzioni che vengono effettivamente utilizzate dal programma vengono calcolati e caricati. 
+Quando una funzione della libc viene chiamata, analizzando tramite gdb, accanto all'istruzione di chiamata `call 0x222222 ` compare \<puts@plt\>. Questo tag indica che l'indirizzo corrisponde all'entry plt della tabella PLT. Tale tabella contiene una istruzione di salto incondizionato verso la corrispondente entri della GOT. Se tale entry è vuota allora viene chiamata la procedura che calcola l'indirizzo, altrimenti la funzione puts viene direttamente chiamata.
 
 
 ----
