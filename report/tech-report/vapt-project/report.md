@@ -1,28 +1,32 @@
-## Indice
 
-Executive Summary - Qual'è l'obiettivo del mio lavoro
-	Summary of Results - Riassiunto dei risultati trovati e delle vuln trovate
+---
+## Table of Contents
 
-Attack Narrative
-	Remote System Discovery
-	Anonymous FTP Login
-	Active Scanning and Files Disclosure
-	Login as Admin
-	Reverse Shell as odoo User
-	Privilege Escalation to root
-	Lateral Movement
-	Privilege Escalation on second machine
+#### [[#Executive Summary]]
+&nbsp; &nbsp; [[#Summary of Results]]
 
-Conclusion
-	Recommendations (Some Fixes) - Quali fix e patch si possono attuare
+#### [[#Attack Narrative]]
+&nbsp; &nbsp; [[#Remote System Discovery]]
+&nbsp; &nbsp; &nbsp; [[#Anonymous FTP Login & Files Disclosure]]
+&nbsp; &nbsp; &nbsp; [[#Login as Admin]]
+&nbsp; &nbsp; &nbsp; [[#Reverse Shell as odoo User]]
+&nbsp; &nbsp; &nbsp; [[#Privilege Escalation to root]]
+&nbsp; &nbsp; &nbsp; [[#Lateral Movement]]
+&nbsp; &nbsp; &nbsp; [[#Privilege Escalation on Second Machine]]
+
+#### [[#Conclusion]]
+&nbsp; &nbsp; [[#Recommendations]]
 
 -----
 # Progetto VAPT
 
-bla bla
+Nome: Nicola Giuffrida
+Università: Università degli Studi di Catania
+Corso: Vulnerability Assesment and Penetration Testing
+Professore: Sergio Esposito
+Data: 20/06/2025
 
 -----
-
 ## Executive Summary
 
 L'obiettivo di questa attività di VAPT è di trovare ed exploitare tutte le vulnerabilità presenti sulla macchina target (o anche su altre) e prenderne il controllo in modo da ottenere le 3 flag richieste dalla Room di TryHackMe. 
@@ -34,9 +38,7 @@ Quanto segue nel report è un dettagliato walkthrough passo dopo passo di quello
 La Discovery iniziale ha portato alla luce un servizio FTP in cui è possibile effettuare un login tramite utente Anonimo, quindi senza password. Tale accesso rivela un eseguibile usato per cambiare password che una volta analizzato rivela l'employee id che mi ha permesso di ottenere la password di un utente admin sul sito web hostato. Quest'ultimo utilizza una versione Odoo vulnerabile a Remote Code Execution (CVE-2017-10803). Exploitare questa vulnerabilità mi ha permesso di ottenere una reverse shell sulla macchina e trovare così la prima flag. Una volta dentro ho exploitato un eseguibile SUID vulnerabile a ret2win per ottenere privilegi di root. Questo mi ha permesso poi di fare movimento laterale verso una seconda macchina (locale a quella exploitata) e trovare la seconda flag della Room tramite exploitation dello stesso eseguibile, che la macchina espone su una porta. Su questa macchina ho anche trovato delle chiavi ssh private e pubbliche che mi hanno permesso un più rapido accesso a tale macchina e mi sono state molto utili per sfruttare la vulnerabilità successiva. Infatti oltre alle chiavi era presente un eseguibile SUID vulnerabile a ret2libc, che una volta exploitato mi ha garantito accesso come root sulla seconda macchina e la terza ed ultima flag.
 
 -----
-
 ## Attack Narrative
-
 
 ### Remote System Discovery
 
@@ -48,7 +50,6 @@ Le porte 21 e 22 sembrano protette da login tramite password mentre la porta 80 
 ![[Pasted image 20250618192404.png]]
 
 Collegandomi a quest'ultimo servizio da browser vengo reindirizzato ad una pagina di login, quindi anche questo servizio è protetto tramite autenticazione.
-
 
 ### Anonymous FTP Login & Files Disclosure
 
@@ -76,7 +77,6 @@ A number of people have been forgetting their passwords so we've made a temporar
 ```
 
 mentre password è un eseguibile non-stripped.
-
 
 ### Login as Admin
 
@@ -155,8 +155,6 @@ I payload piu semplici che ho provato precedentemente (come `bash -i >& /dev/tcp
 
 Dopo aver uploadato e utilizzato il file .pickle contenente il payload per effettuare la de-anonimizzazione del database sul server ottengo una shell come utente odoo, e ottengo così la mia prima flag.
 
-
-
 ### Privilege Escalation to root
 
 Dalla reverse shell ottenuta ho cercato degli eseguibili SUID per elevare i miei privilegi.
@@ -201,7 +199,6 @@ Mi è poi bastato andare nella directory /root per trovare un file root.txt, che
 
 Anche dopo la ricerca di un file flag.txt tramite find non ho trovato nessuna flag, probabilmente non si trova su questa macchina, o meglio su questo container.
 
-
 ### Lateral Movement
 
 Uno scan tramite `nmap` sulla VLAN della macchina target (172.17.0.0/16) rivela due host (probabilmente altri 2 container docker). Il secondo sembra semplicemente hostare il database postres mentre il prima sembra più interessante.
@@ -217,7 +214,6 @@ Fortunatamente la macchina target ha netcat installato che mi ha permesso di col
 ![[Pasted image 20250619193655.png]]
 
 Vengo loggato come zeeshan e ottengo la seconda flag della room.
-
 
 ### Privilege Escalation on Second Machine
 
@@ -341,14 +337,11 @@ dove il file id_rsa è la chiave privata di zeeshan.
 
 Eseguendo lo script ottengo una shell sulla macchina target come root e trovo la terza ed ultima flag.
 
-
-
 ----
 ## Conclusion
 
-Sia la macchina target che una seconda macchina (o secondo container) sono stati completamente violate. In entrambe ho ottenuto prima accesso come utente con bassi privilegi e poi come root. Proprio questo mi ha permesso di fare scan della VLAN interna e movimento laterale. Ho ottenuto accesso a dati privati come chiavi private, password, e dump del database. 
+Il rischio complessivo identificato dalla attività di VAPT è **Alto**. Sia la macchina target che una seconda macchina (o secondo container) sono state completamente violate. In entrambe ho ottenuto prima accesso come utente con bassi privilegi e poi come root. Proprio questo mi ha permesso di fare scan della VLAN interna e movimento laterale. Ho ottenuto accesso a dati privati come chiavi private, password, e dump del database. 
 Le componenti della triade CIA sono state pesantemente compromesse. In primis Integrità e Confidenzialità ma visto la completa violazione di più sistemi non è da escludere che anche la Disponibilità di alcuni servizi potrebbe essere stata attaccata.
-
 
 ### Recommendations
 
@@ -356,5 +349,7 @@ Viste le varie vulnerabilità trovate ci sono numerosi fix e miglioramenti neces
 I principali sono i seguenti:
 - Non lasciare servizi aperti ad un possibili login tramite utente Anonimo.
 - Proteggere adeguatamente ogni eseguibile con il maggior numero di protezioni, anche se tale programma è eseguito solo da host e persone interne alla VLAN.
+- Non lasciare credenziali in chiaro, in particolare all'interno di eseguibili.
 - Fare verifiche e test del codice prima di pubblicarlo, non utilizzare funzioni deprecate o vulnerabili.
 - Aggiornare librerie e moduli alle versioni più recenti; rimanere aggiornati su possibili CVE relative a componenti utilizzate.
+- Monitorare costantemente la rete interna per qualsiasi tipo di traffico anomalo.

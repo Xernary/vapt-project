@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "report"
             }
+          },
+          {
+            "id": "74198d4bdda0d2c7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "report.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "report"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -168,8 +183,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "77ce382e6f6d19ee",
+  "active": "74198d4bdda0d2c7",
   "lastOpenFiles": [
+    "Remote System Discovery.md",
+    "report.md",
     "Pasted image 20250620114517.png",
     "Pasted image 20250620114506.png",
     "Pasted image 20250620113535.png",
@@ -180,8 +197,6 @@
     "Pasted image 20250620112924.png",
     "Pasted image 20250620112611.png",
     "Pasted image 20250620110639.png",
-    "Pasted image 20250620110556.png",
-    "report.md",
     "Welcome.md"
   ]
 }
