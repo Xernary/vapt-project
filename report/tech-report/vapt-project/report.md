@@ -52,7 +52,13 @@ Collegandomi a quest'ultimo servizio da browser vengo reindirizzato ad una pagin
 
 ### Anonymous FTP Login & Files Disclosure
 
-Per prima cosa mi sono concentrato sulla porta 21. Ho provato a collegarmi e dopo alcuni tentativi sono riuscito a effettuare il login tramite utente Anonimo, il quale non richiede password.
+Per prima cosa ho provato a verificare se qualche parametro dell'URL del sito web fosse vulnerabile a sql injection. Ho avviato degli scan con `sqlmap` su vari parametri che ho trovato ma nessuno è risultato vulnerabile. 
+Uno dei vari che ho provato è stato 'master_pwd' nel form di cambio password:
+
+![[Pasted image 20250620114506.png]]
+![[Pasted image 20250620114517.png]]
+
+Allora mi sono concentrato sulla porta 21. Ho provato a collegarmi e dopo alcuni tentativi sono riuscito a effettuare il login tramite utente Anonimo, il quale non richiede password.
 
 ![[Pasted image 20250618190449.png]]
 
@@ -305,19 +311,50 @@ Ho poi scritto uno script che si occupa soltanto di stampare l'indirizzo puts@pl
 ![[Pasted image 20250620110420.png]]
 
 L'output dell'esecuzione dello script è il seguente:
+
 ![[Pasted image 20250620110639.png]]
 
-quindi sembra funzionare correttamente, stampando l'indirizzo puts@plt
+quindi sembra funzionare correttamente: stampa l'indirizzo puts@plt che rimane costante ad ogni esecuzione, mentre l'indirizzo effettivo della puts in memoria (il secondo) cambia perchè la libc viene ri-mappata ad ogni esecuzione.
 
+![[Pasted image 20250620112611.png]]
 
+Il seguente pezzo di codice che ho aggiunto calcola l'indirizzo base della libc a run-time e lo stampa. Per calcolarlo sottrae l'offset della funzione puts all'interno della libc al suo indirizzo effettivo una volta che la libc viene mappata: questa operazione restituisce proprio il base address della libc in memoria.
 
+![[Pasted image 20250620112924.png]]
+![[Pasted image 20250620112933.png]]
 
+Tramite pwngdb ho potuto verificare che l'indirizzo della libc calcolato è corretto.
+Infine ho costruito il secondo payload da inviare, contenente la ROP chain composta dai gadget trovati con ropper.
 
+![[Pasted image 20250620113218.png]]
 
+L'esecuzione dello script va a buon fine e ottengo una shell (in locale)
+
+![[Pasted image 20250620113323.png]]
+
+Per eseguire lo script dalla mia macchina verso la macchina target ho utilizzato ssh con le chiavi RSA trovate in precedenza, modificando lo script in questo modo:
+
+![[Pasted image 20250620113441.png]]
+dove il file id_rsa è la chiave privata di zeeshan.
+
+![[Pasted image 20250620113535.png]]
+
+Eseguendo lo script ottengo una shell sulla macchina target come root e trovo la terza ed ultima flag.
 
 
 
 ----
 ## Conclusion
 
+Sia la macchina target che una seconda macchina (o secondo container) sono stati completamente violate. In entrambe ho ottenuto prima accesso come utente con bassi privilegi e poi come root. Proprio questo mi ha permesso di fare scan della VLAN interna e movimento laterale. Ho ottenuto accesso a dati privati come chiavi private, password, e dump del database. 
+Le componenti della triade CIA sono state pesantemente compromesse. In primis Integrità e Confidenzialità ma visto la completa violazione di più sistemi non è da escludere che anche la Disponibilità di alcuni servizi potrebbe essere stata attaccata.
+
+
 ### Recommendations
+
+Viste le varie vulnerabilità trovate ci sono numerosi fix e miglioramenti necessari.
+I principali sono i seguenti:
+- Non lasciare servizi aperti ad un possibili login tramite utente Anonimo.
+- Proteggere adeguatamente ogni eseguibile con il maggior numero di protezioni, anche se tale programma è eseguito solo da host e persone interne alla VLAN.
+- Fare verifiche e test del codice prima di pubblicarlo, non utilizzare funzioni deprecate o vulnerabili.
+- Aggiornare librerie e moduli alle versioni più recenti; rimanere aggiornati su possibili CVE relative a componenti utilizzate.
