@@ -60,18 +60,13 @@ Nella fase di Vulnerability Analysis ho ricercato, tramite scan passivo e attivo
 
 La Discovery iniziale ha portato alla luce un servizio FTP in cui è possibile effettuare un login tramite utente Anonimo, quindi senza password. Tale accesso rivela un eseguibile usato per cambiare password che una volta analizzato rivela l'employee id che mi ha permesso di ottenere la password di un utente admin sul sito web hostato. Quest'ultimo utilizza una versione Odoo vulnerabile a Remote Code Execution (CVE-2017-10803). Exploitare questa vulnerabilità mi ha permesso di ottenere un accesso diretto alla macchina. Una volta dentro ho exploitato un eseguibile SUID vulnerabile a ret2win per ottenere privilegi di root. Questo mi ha permesso poi di fare movimento laterale verso una seconda macchina (locale a quella exploitata) tramite exploitation dello stesso eseguibile, che la macchina espone su una porta. Su questa macchina ho anche trovato delle chiavi ssh private e pubbliche che mi hanno permesso un più rapido accesso alla macchina stessa e mi sono state molto utili per sfruttare la vulnerabilità successiva. Infatti oltre alle chiavi era presente un eseguibile SUID vulnerabile a ret2libc, che una volta exploitato mi ha garantito accesso come root sulla seconda macchina.
 
--- Inserire Grafico a Torta qui --
+In totale sono state riscontrate 9 vulnerabilità, di cui ne elenco il risk score sotto:
 
-| Severità | Numero | Esempi                                |
-| -------- | ------ | ------------------------------------- |
-| Critico  | 3      | Ret2win/Ret2libc, Odoo CVE-2017-10803 |
-| Alto     | 2      | Hardcoded Password, FTP Login         |
-| Medio    | 2      | Cookie HttpOnly, FTP cleartext        |
-| Basso    | 2      | TCP timestamp, ICMP timestamp         |
+![[Pasted image 20250625184759.png]]
 
 | Nome vulnerabilità               | Gravità | CVE            | CWE      | Impatto                                      |
 | -------------------------------- | ------- | -------------- | -------- | -------------------------------------------- |
-| Anonymous FTP Login              | Medio   | CVE-1999-0497  | CWE-200  | Accesso non autenticato                      |
+| Anonymous FTP Login              | Alto    | CVE-1999-0497  | CWE-200  | Accesso non autenticato                      |
 | Cookie senza HttpOnly            | Medio   | -              | CWE-1004 | Session hijacking                            |
 | FTP Login in chiaro              | Medio   | -              | CWE-319  | Intercettazione credenziali                  |
 | TCP/ICMP timestamp reply         | Basso   | CVE-1999-0524  | CWE-200  | Raccolta informazioni                        |
@@ -79,8 +74,7 @@ La Discovery iniziale ha portato alla luce un servizio FTP in cui è possibile e
 | Odoo Arbitrary File Upload       | Critico | CVE-2017-10803 | CWE-434  | Remote Code Execution                        |
 | SUID ret2win exploit             | Critico | -              | CWE-120  | Privilege escalation (root)                  |
 | Movimento laterale + ret2libc    | Critico | -              | CWE-120  | Controllo macchina remota                    |
-https://cwe.mitre.org/data/definitions/1003.html
------
+ fonte per CWE: https://cwe.mitre.org/data/definitions/1003.html
 ## Attack Narrative
 
 ### Remote System Discovery
@@ -101,6 +95,11 @@ Uno dei vari tentativi che ho fatto è stato sul parametro 'master_pwd' nel form
 
 ![[Pasted image 20250620114506.png]]
 ![[Pasted image 20250620114517.png]]
+
+Ho inoltre effettuato uno scan tramite `OpenVAS` che ha rivelato numerose vulnerabilità, la maggior parte poco utili.
+
+![[Pasted image 20250625185244.png]]
+![[Pasted image 20250625185424.png]]
 
 Fatto questo mi sono concentrato sulla porta 21. Ho provato a collegarmi e dopo alcuni tentativi sono riuscito a effettuare il login tramite utente Anonimo, il quale non richiede password.
 
