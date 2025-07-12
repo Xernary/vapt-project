@@ -34,9 +34,21 @@
               "icon": "lucide-file",
               "title": "report"
             }
+          },
+          {
+            "id": "2d0c6b59f6f6b7f3",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "Pasted image 20250625191359.png"
+              },
+              "icon": "lucide-image",
+              "title": "Pasted image 20250625191359"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -183,21 +195,20 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "74198d4bdda0d2c7",
+  "active": "2d0c6b59f6f6b7f3",
   "lastOpenFiles": [
+    "report.md",
     "Pasted image 20250625191359.png",
     "Pasted image 20250625191137.png",
     "Pasted image 20250625185424.png",
     "Pasted image 20250625185252.png",
     "Pasted image 20250625185244.png",
     "Pasted image 20250625184759.png",
-    "report.md",
     "Pasted image 20250620174750.png",
     "Pasted image 20250620172514.png",
     "Pasted image 20250620172417.png",
     "Pasted image 20250620172353.png",
     "Remote System Discovery.md",
-    "Pasted image 20250620114517.png",
     "Welcome.md"
   ]
 }
