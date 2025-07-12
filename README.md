@@ -1,19 +1,19 @@
 ## Table of Contents
 
 ### [Executive Summary](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#executive-summary-1)  
-### [Summary of Results](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#summary-of-results)  
+### [Summary of Results](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#summary-of-results-1)  
 
-### [Attack Narrative](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#attack-narrative)  
-#### [Remote System Discovery](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#remote-system-discovery)  
-#### [Anonymous FTP Login & Files Disclosure](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#anonymous-ftp-login--files-disclosure)  
-#### [Login as Admin](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#login-as-admin)  
-#### [Reverse Shell as odoo User](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#reverse-shell-as-odoo-user)  
-#### [Privilege Escalation to root](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-to-root)  
-#### [Lateral Movement](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#lateral-movement)  
-#### [Privilege Escalation on Second Machine](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-on-second-machine)  
+### [Attack Narrative](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#attack-narrative-1)  
+#### [Remote System Discovery](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#remote-system-discovery-1)  
+#### [Anonymous FTP Login & Files Disclosure](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#anonymous-ftp-login--files-disclosure-1)  
+#### [Login as Admin](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#login-as-admin-1)  
+#### [Reverse Shell as odoo User](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#reverse-shell-as-odoo-user-1)  
+#### [Privilege Escalation to root](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-to-root-1)  
+#### [Lateral Movement](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#lateral-movement-1)  
+#### [Privilege Escalation on Second Machine](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-on-second-machine-1)  
 
-### [Conclusion](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#conclusion)  
-#### [Recommendations](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#recommendations)
+### [Conclusion](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#conclusion-1)  
+#### [Recommendations](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#recommendations-1)
 
 
 # Progetto VAPT
