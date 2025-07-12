@@ -72,6 +72,7 @@ Una volta attivata la VPN e attivata la macchina target ho subito fatto uno scan
 ![Pasted_image_20250618190220.png](./images/Pasted_image_20250618190220.png)
 
 Le porte 21 e 22 sembrano protette da login tramite password mentre la porta 80 hosta una server web basato su Odoo. 
+
 ![Pasted_image_20250618192404.png](./images/Pasted_image_20250618192404.png)
 
 Collegandomi a quest'ultimo servizio da browser vengo reindirizzato ad una pagina di login, quindi anche questo servizio è protetto tramite autenticazione.
