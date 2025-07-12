@@ -4,25 +4,31 @@
 #### &nbsp; &nbsp; &nbsp; [Summary of Results](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#summary-of-results)  
 
 ### [Attack Narrative](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#attack-narrative-1)  
-#### [Remote System Discovery](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#remote-system-discovery-1)  
-#### [Anonymous FTP Login & Files Disclosure](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#anonymous-ftp-login--files-disclosure-1)  
-#### [Login as Admin](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#login-as-admin-1)  
-#### [Reverse Shell as odoo User](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#reverse-shell-as-odoo-user-1)  
-#### [Privilege Escalation to root](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-to-root-1)  
-#### [Lateral Movement](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#lateral-movement-1)  
-#### [Privilege Escalation on Second Machine](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-on-second-machine-1)  
+#### &nbsp; &nbsp; &nbsp; [Remote System Discovery](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#remote-system-discovery-1)  
+#### &nbsp; &nbsp; &nbsp; [Anonymous FTP Login & Files Disclosure](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#anonymous-ftp-login--files-disclosure-1)  
+#### &nbsp; &nbsp; &nbsp; [Login as Admin](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#login-as-admin-1)  
+#### &nbsp; &nbsp; &nbsp; [Reverse Shell as odoo User](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#reverse-shell-as-odoo-user-1)  
+#### &nbsp; &nbsp; &nbsp; [Privilege Escalation to root](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-to-root-1)  
+#### &nbsp; &nbsp; &nbsp; [Lateral Movement](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#lateral-movement-1)  
+#### &nbsp; &nbsp; &nbsp; [Privilege Escalation on Second Machine](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#privilege-escalation-on-second-machine-1)  
 
 ### [Conclusion](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#conclusion-1)  
-#### [Recommendations](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#recommendations-1)
+#### &nbsp; &nbsp; &nbsp; [Recommendations](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#recommendations-1)
 
 
 # Progetto VAPT
 
 Nome: Nicola Giuffrida
+
 Università: Università degli Studi di Catania
+
 Corso: Vulnerability Assessment and Penetration Testing
+
 Professore: Sergio Esposito
+
 Data: 20/06/2025
+
+</br>
 
 ## Executive Summary
 
