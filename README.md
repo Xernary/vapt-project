@@ -19,6 +19,7 @@
 ### [Conclusion](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#conclusion-1)  
 #### &nbsp; &nbsp; &nbsp; [Recommendations](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#recommendations-1)
 
+</br>
 
 # Progetto VAPT
 
@@ -131,12 +132,15 @@ Tornando alla schermata del sito web sulla porta 80 e cliccando su "Manage Datab
 ![Pasted_image_20250618193530.png](./images/Pasted_image_20250618193530.png)
 
 Da qui è possibile scaricare una copia del database se si conosce la "Master Password". Ho provato quella trovata tramite il programma password e sono riuscito a scaricare un backup del database che consiste in 3 file:
+
 ![Pasted_image_20250618193706.png](./images/Pasted_image_20250618193706.png)
 
 Analizzando `manifest.json` ho trovato che la versione di Odoo è la 10.0
+
 ![Pasted_image_20250620172514.png](./images/Pasted_image_20250620172514.png)
 
 e dopo una rapida ricerca sul web ho trovato che tale versione presenta una nota vulnerabilità, la `CVE-2017-10803`.
+
 ![Pasted_image_20250618193923.png](./images/Pasted_image_20250618193923.png)
 
 Tale vulnerabilità risiede in un modulo di Odoo che si occupa di anonimizzare il database. Il modulo, se presente, utilizza una libreria python chiamata Pickle. Ipotizziamo che un admin del database lo anonimizzi tramite il modulo di Odoo; quello che succede è il seguente:
@@ -196,6 +200,7 @@ Dopo aver uploadato e utilizzato il file .pickle contenente il payload per deano
 Dalla reverse shell ottenuta ho cercato degli eseguibili `SUID` per elevare i miei privilegi.
 
 ![Pasted_image_20250619112017.png](./images/Pasted_image_20250619112017.png)
+
 Tutti gli eseguibili sembrano standard tranne `ret`. L'ho quindi trasferito sulla mia macchina locale facendo una POST via `curl` (che ho trovato installato) dalla macchina target verso un server PHP che hostato sulla mia macchina. L'analisi ha rivelato che si tratta di un ELF a 64 bit non-stripped e con PIE e Canary disabilitati.
 
 ![Pasted_image_20250619112506.png](./images/Pasted_image_20250619112506.png)
