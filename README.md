@@ -1,7 +1,7 @@
 ## Table of Contents
 
 ### [Executive Summary](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#executive-summary-1)  
-&nbsp; &nbsp; &nbsp; [Summary of Results](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#summary-of-results-1)  
+### &nbsp; &nbsp; &nbsp; [Summary of Results](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#summary-of-results-1)  
 
 ### [Attack Narrative](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#attack-narrative-1)  
 #### [Remote System Discovery](https://github.com/Xernary/vapt-project/tree/master?tab=readme-ov-file#remote-system-discovery-1)  
