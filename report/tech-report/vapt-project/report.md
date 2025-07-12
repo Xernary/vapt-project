@@ -60,21 +60,36 @@ Nella fase di Vulnerability Analysis ho ricercato, tramite scan passivo e attivo
 
 La Discovery iniziale ha portato alla luce un servizio FTP in cui è possibile effettuare un login tramite utente Anonimo, quindi senza password. Tale accesso rivela un eseguibile usato per cambiare password che una volta analizzato rivela l'employee id che mi ha permesso di ottenere la password di un utente admin sul sito web hostato. Quest'ultimo utilizza una versione Odoo vulnerabile a Remote Code Execution (CVE-2017-10803). Exploitare questa vulnerabilità mi ha permesso di ottenere un accesso diretto alla macchina. Una volta dentro ho exploitato un eseguibile SUID vulnerabile a ret2win per ottenere privilegi di root. Questo mi ha permesso poi di fare movimento laterale verso una seconda macchina (locale a quella exploitata) tramite exploitation dello stesso eseguibile, che la macchina espone su una porta. Su questa macchina ho anche trovato delle chiavi ssh private e pubbliche che mi hanno permesso un più rapido accesso alla macchina stessa e mi sono state molto utili per sfruttare la vulnerabilità successiva. Infatti oltre alle chiavi era presente un eseguibile SUID vulnerabile a ret2libc, che una volta exploitato mi ha garantito accesso come root sulla seconda macchina.
 
-In totale sono state riscontrate 9 vulnerabilità, di cui ne elenco il risk score sotto:
+</br>
+</br>
+</br>
 
-![[Pasted image 20250625184759.png]]
+In totale sono state riscontrate 9 vulnerabilità, delle quali ne elenco risk score e impatto:
 
-| Nome vulnerabilità               | Gravità | CVE            | CWE      | Impatto                                      |
-| -------------------------------- | ------- | -------------- | -------- | -------------------------------------------- |
-| Anonymous FTP Login              | Alto    | CVE-1999-0497  | CWE-200  | Accesso non autenticato                      |
-| Cookie senza HttpOnly            | Medio   | -              | CWE-1004 | Session hijacking                            |
-| FTP Login in chiaro              | Medio   | -              | CWE-319  | Intercettazione credenziali                  |
-| TCP/ICMP timestamp reply         | Basso   | CVE-1999-0524  | CWE-200  | Raccolta informazioni                        |
-| Hardcoded password in eseguibile | Alto    | -              | CWE-798  | Privilege escalation via reverse engineering |
-| Odoo Arbitrary File Upload       | Critico | CVE-2017-10803 | CWE-434  | Remote Code Execution                        |
-| SUID ret2win exploit             | Critico | -              | CWE-120  | Privilege escalation (root)                  |
-| Movimento laterale + ret2libc    | Critico | -              | CWE-120  | Controllo macchina remota                    |
- fonte per CWE: https://cwe.mitre.org/data/definitions/1003.html
+![[Pasted image 20250625191359.png]]
+
+fonte per CWE: https://cwe.mitre.org/data/definitions/1003.html
+
+| Nome vulnerabilità               | Gravità | CVE            | CWE      | Impatto                                                                                      |
+| -------------------------------- | ------- | -------------- | -------- | -------------------------------------------------------------------------------------------- |
+| Anonymous FTP Login              | Alto    | CVE-1999-0497  | CWE-200  | Accesso non autenticato, disclosure di file sensibili                                        |
+| Cookie senza HttpOnly            | Medio   | -              | CWE-1004 | Session hijacking quindi possibile attacco all'autenticazione di utenti                      |
+| FTP Login in chiaro              | Medio   | -              | CWE-319  | Intercettazione credenziali                                                                  |
+| TCP/ICMP timestamp reply         | Basso   | CVE-1999-0524  | CWE-200  | Raccolta informazioni                                                                        |
+| Hardcoded password in eseguibile | Alto    | -              | CWE-798  | Ottenimento password di admin/master password, ottenimento di dump del database              |
+| Odoo Arbitrary File Upload       | Critico | CVE-2017-10803 | CWE-434  | Remote Code Execution, ottenimento di un accesso diretto alla macchina remota                |
+| SUID ret2win exploit             | Critico | -              | CWE-120  | Privilege escalation (root) quindi ottenimento di elevati privilegi sulla macchina attaccata |
+| Movimento laterale + ret2libc    | Critico | -              | CWE-120  | Ottenimento di un accesso diretto su una seconda macchina                                    |
+
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+
+------
 ## Attack Narrative
 
 ### Remote System Discovery
@@ -100,6 +115,8 @@ Ho inoltre effettuato uno scan tramite `OpenVAS` che ha rivelato numerose vulner
 
 ![[Pasted image 20250625185244.png]]
 ![[Pasted image 20250625185424.png]]
+
+Le tre vulnerabilità con severity low riguardano principalmente la disclosure di timestamp, quindi il loro impatto e la loro utilità è molto bassa. "Weak MAC Algorithms" invece riguarda l'utilizzo di algoritmi di MAC vulnerabili su SSH, che anche in questo caso risulta poco utile. Più gravi sono invece le vulnerabilità con severity medium. "Missing HttpOnly Cookie Attribute" come dice il nome riguarda l'assenza dell'attributo HttpOnly relativo al Cookie. Questo implica che qualunque script javascript può accedere al Cookie di sessione. Nel caso il sito web sia vulnerabile a XSS, un attaccante pottebbe ottenere il Cookie di un utente e quindi autenticarsi come esso. "FTP Unencrypted Cleartext Login" indica invece che le credenziali di autenticazione a FTP sono trasmesse in chiaro. Ciò significa che un attaccante (con accesso alla rete interna) può fare sniffing del traffico di rete e ottenere le credenziali utilizzate dagli utenti che effettuano il login.
 
 Fatto questo mi sono concentrato sulla porta 21. Ho provato a collegarmi e dopo alcuni tentativi sono riuscito a effettuare il login tramite utente Anonimo, il quale non richiede password.
 
@@ -397,11 +414,11 @@ Le componenti della triade CIA sono state pesantemente compromesse. In primis In
 
 Viste le varie vulnerabilità trovate ci sono numerosi fix e miglioramenti necessari. Per ogni vulnerabilità trovata, elenco le mitigazioni consigliate:
 - **Anonymous FTP Login**: disabilitare l'opzione di login anonimo all'interno di FTP.
-- **Cookie senza HttpOnly**:
-- **FTP Login in chiaro**:
-- **TCP/ICMP timestamp reply:**
+- **Cookie senza HttpOnly**: Impostare l'attributo "HttpOnly" su ogni cookie di sessione.
+- **FTP Login in chiaro**: Utilizzare FTPS che cifra i dati scambiati, molto più sicuro.
+- **TCP/ICMP timestamp reply:** Disabilitare supporto per timestamp ICMP o bloccare tali richieste remote via firewall.
 - **Hardcoded password in eseguibile**: ofuscare l'eseguibile e mantenere la password su un file, se possibile cifrata.
 - **Odoo Arbitrary File Upload** (CVE-2017-10803): Disabilitare il modulo "Database Anonimization" o aggiornare Odoo alla versione più recente.
-- **SUID ret2win in eseguibile**: Abilitare Canary e Pie nell'eseguibile, sostituire gets con fgets o getline più sicure e rimuovere funzione win inutilizzata.
+- **SUID ret2win in eseguibile**: Abilitare Canary e Pie nell'eseguibile, sostituire gets con fgets o getline più sicure perchè effettuano il controllo sulla dimensione del buffer impedendo quindi BOF e rimuovere funzione win inutilizzata.
 - **ret2libc in eseguibile**: stesse modifiche della vulnerabilità precedente.
 
